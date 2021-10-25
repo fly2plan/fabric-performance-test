@@ -1,0 +1,577 @@
+<!doctype html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<script>
+    function plotChart(divId, chartData) {
+        // Convert from stringified html, to valid JSON
+        const chartDetails = JSON.parse(chartData.replace(/&quot;/g,'"'));
+        new Chart(document.getElementById(divId), {
+            type: chartDetails.type,
+            data: {
+                labels: chartDetails.labels,
+                datasets: chartDetails.datasets
+            },
+            options: {
+                legend: { display: chartDetails.legend },
+                title: {
+                    display: true,
+                    text: chartDetails.title
+                }
+            }
+        });
+    }
+</script>
+<html>
+<head>
+    <title>Hyperledger Caliper Report</title>
+    <meta charset="UTF-8"/>
+    <style type="text/css">
+        .left-column {
+            position: fixed;
+            width:20%;
+        }
+        .left-column ul {
+            display: block;
+            padding: 0;
+            list-style: none;
+            border-bottom: 1px solid #d9d9d9;
+            font-size: 14px;
+        }
+        .left-column h2{
+            font-size: 24px;
+            font-weight: 400;
+            margin-block-end: 0.5em;
+        }
+        .left-column h3{
+            font-size: 18px;
+            font-weight: 400;
+            margin-block-end: 0.5em;
+        }
+        .left-column li{
+            margin-left: 10px;
+            margin-bottom: 5px;
+            color: #5e6b73;
+        }
+        .right-column {
+            margin-left: 22%;
+            width:60%;
+        }
+        .right-column table {
+            font-size:11px;
+            color:#333333;
+            border-width: 1px;
+            border-color: #666666;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        .right-column h2{
+            font-weight: 400;
+        }
+        .right-column h3{
+            font-weight: 400;
+        }
+        .right-column h4 {
+            font-weight: 400;
+            margin-block-end: 0;
+        }
+        .right-column th {
+            border-width: 1px;
+            font-size: small;
+            padding: 8px;
+            border-style: solid;
+            border-color: #666666;
+            background-color: #f2f2f2;
+        }
+        .right-column td {
+            border-width: 1px;
+            font-size: small;
+            padding: 8px;
+            border-style: solid;
+            border-color: #666666;
+            background-color: #ffffff;
+            font-weight: 400;
+        }
+        .tag {
+            margin-bottom: 10px;
+            padding: 5px 10px;
+        }
+        pre {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            -khtml-border-radius: 5px;
+            overflow:auto;
+            max-height:300px;
+            font-size:12px;
+        }
+        .charting {
+            display:flex;
+            flex-direction:row;
+            flex-wrap: wrap;
+            page-break-inside: auto;
+        }
+        .chart {
+            display:flex;
+            flex:1;
+            max-width: 50%;
+        }
+    </style>
+</head>
+<body style="font-family: IBM Plex Sans; font-weight: 200;">
+    <main>
+        <div class="left-column">
+            <img src="https://hyperledger.github.io/caliper/assets/img/hyperledger_caliper_logo_color.png" style="width:95%;" alt="">
+            <ul>
+                <h3>&nbspBasic information</h3>
+                <li>DLT: &nbsp<span style="font-weight: 500;">fabric</span></li>
+                <li>Name: &nbsp<span style="font-weight: 500;">create-private-asset</span></li>
+                <li>Description: &nbsp<span style="font-weight: 500;">This is a duration based benchmark targeting a Hyperledger Fabric network using the &#x60;basic&#x60; NodeJS chaincode contract that is interacted with via a Fabric-SDK-Node Gateway. Each test round invokes the &#x60;createPrivateAsset&#x60; method, with successive rounds increasing the byteSize of the asset added into the Private Data  Collection of the authorized organization.</span></li>
+                <li>Benchmark Rounds: &nbsp<span style="font-weight: 500;">8</span></li>
+                <li><a href="#benchmarkInfo">Details</a></li>
+            </ul>
+            <ul>
+                <h3>&nbspBenchmark results</h3>
+                <li><a href="#benchmarksummary">Summary</a></li>
+                    <li><a href="#create-private-asset-8000-fixed-tps">create-private-asset-8000-fixed-tps</a></li>
+                    <li><a href="#create-private-asset-100">create-private-asset-100</a></li>
+                    <li><a href="#create-private-asset-200">create-private-asset-200</a></li>
+                    <li><a href="#create-private-asset-500">create-private-asset-500</a></li>
+                    <li><a href="#create-private-asset-1000">create-private-asset-1000</a></li>
+                    <li><a href="#create-private-asset-2000">create-private-asset-2000</a></li>
+                    <li><a href="#create-private-asset-5000">create-private-asset-5000</a></li>
+                    <li><a href="#create-private-asset-10000">create-private-asset-10000</a></li>
+            </ul>
+            <ul>
+                <h3>&nbspSystem under test</h3>
+                <li><a href="#sutdetails">Details</a></li>
+            </ul>
+        </div>
+
+        <div class="right-column">
+            <h1 style="padding-top: 3em; font-weight: 500;">Caliper report</h1>
+            <div style="border-bottom: 1px solid #d9d9d9; margin-bottom: 10px;" id="benchmarksummary">
+                <table style="min-width: 100%;">
+                    <h3>Summary of performance metrics</h3>
+                    <tr>
+                         <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                    </tr>
+
+                    <tr>
+                         <td>create-private-asset-8000-fixed-tps</td> <td>155</td> <td>0</td> <td>15.5</td> <td>2.10</td> <td>0.12</td> <td>0.37</td> <td>12.8</td>
+                    </tr>
+                    <tr>
+                         <td>create-private-asset-100</td> <td>948</td> <td>0</td> <td>32.3</td> <td>2.25</td> <td>0.11</td> <td>0.28</td> <td>30.4</td>
+                    </tr>
+                    <tr>
+                         <td>create-private-asset-200</td> <td>649</td> <td>0</td> <td>33.7</td> <td>2.12</td> <td>0.12</td> <td>0.28</td> <td>30.9</td>
+                    </tr>
+                    <tr>
+                         <td>create-private-asset-500</td> <td>11469</td> <td>0</td> <td>38.3</td> <td>2.18</td> <td>0.11</td> <td>0.25</td> <td>38.1</td>
+                    </tr>
+                    <tr>
+                         <td>create-private-asset-1000</td> <td>1002</td> <td>0</td> <td>34.0</td> <td>2.15</td> <td>0.12</td> <td>0.27</td> <td>31.9</td>
+                    </tr>
+                    <tr>
+                         <td>create-private-asset-2000</td> <td>548</td> <td>0</td> <td>28.7</td> <td>2.15</td> <td>0.12</td> <td>0.31</td> <td>26.2</td>
+                    </tr>
+                    <tr>
+                         <td>create-private-asset-5000</td> <td>1284</td> <td>0</td> <td>32.8</td> <td>2.10</td> <td>0.12</td> <td>0.28</td> <td>31.1</td>
+                    </tr>
+                    <tr>
+                         <td>create-private-asset-10000</td> <td>910</td> <td>0</td> <td>30.9</td> <td>1.15</td> <td>0.11</td> <td>0.28</td> <td>30.8</td>
+                    </tr>
+                </table>
+            </div>
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="create-private-asset-8000-fixed-tps">
+                <h2>Benchmark round: create-private-asset-8000-fixed-tps</h2>
+                <p>Test a submitTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart Contract method named &#x60;createPrivateAsset&#x60;, which inserts an asset of size 8000 bytes into the Private Data Collection of the authorized organization at a fixed TPS rate.</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 10
+rateControl:
+  type: fixed-rate
+  opts:
+    tps: 15
+</pre>
+                        <h3>Performance metrics for create-private-asset-8000-fixed-tps</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>create-private-asset-8000-fixed-tps</td> <td>155</td> <td>0</td> <td>15.5</td> <td>2.10</td> <td>0.12</td> <td>0.37</td> <td>12.8</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for create-private-asset-8000-fixed-tps</h3>
+                            <h4>Resource monitor: docker</h4>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                <table>
+                                    <tr>
+                                         <th>Name</th> <th>CPU%(max)</th> <th>CPU%(avg)</th> <th>Memory(max) [MB]</th> <th>Memory(avg) [MB]</th> <th>Traffic In [MB]</th> <th>Traffic Out [MB]</th> <th>Disc Write [MB]</th> <th>Disc Read [KB]</th>
+                                    </tr>
+                                    <tr>
+                                         <td>grafana</td> <td>0.12</td> <td>0.08</td> <td>25.8</td> <td>25.8</td> <td>0.000126</td> <td>0.000126</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>prometheus</td> <td>0.09</td> <td>0.05</td> <td>31.8</td> <td>31.8</td> <td>0.00</td> <td>0.00162</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>dev-peer0.org2.example.com-basic_1-dc9c7be839e7d63b706556b5b2fd796bf9218dcd1eac88923225b5ae8b6c2774</td> <td>2.63</td> <td>1.01</td> <td>70.0</td> <td>69.8</td> <td>0.691</td> <td>0.600</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>dev-peer0.org1.example.com-basic_1-dc9c7be839e7d63b706556b5b2fd796bf9218dcd1eac88923225b5ae8b6c2774</td> <td>2.94</td> <td>1.01</td> <td>66.3</td> <td>66.1</td> <td>0.817</td> <td>0.709</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>orderer2.example.com</td> <td>4.64</td> <td>1.72</td> <td>169</td> <td>168</td> <td>0.722</td> <td>1.28</td> <td>1.34</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>orderer3.example.com</td> <td>3.17</td> <td>1.52</td> <td>198</td> <td>197</td> <td>0.869</td> <td>1.47</td> <td>1.34</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>orderer.example.com</td> <td>2.12</td> <td>1.05</td> <td>169</td> <td>169</td> <td>0.877</td> <td>0.303</td> <td>1.34</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>ca_orderer</td> <td>0.15</td> <td>0.03</td> <td>7.33</td> <td>7.33</td> <td>0.0000706</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>peer0.org2.example.com</td> <td>9.41</td> <td>4.82</td> <td>167</td> <td>166</td> <td>2.05</td> <td>1.54</td> <td>3.10</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>couchdb2</td> <td>15.47</td> <td>6.70</td> <td>87.9</td> <td>84.7</td> <td>0.0765</td> <td>0.120</td> <td>2.32</td> <td>24.0</td>
+                                    </tr>
+                                    <tr>
+                                         <td>ca.org2.example.com</td> <td>0.00</td> <td>0.00</td> <td>6.48</td> <td>6.48</td> <td>0.0000706</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>peer0.org1.example.com</td> <td>10.80</td> <td>5.44</td> <td>235</td> <td>235</td> <td>4.16</td> <td>2.55</td> <td>4.45</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>couchdb0</td> <td>24.19</td> <td>10.09</td> <td>99.7</td> <td>96.3</td> <td>1.34</td> <td>1.41</td> <td>3.58</td> <td>20.0</td>
+                                    </tr>
+                                    <tr>
+                                         <td>ca.org1.example.com</td> <td>0.00</td> <td>0.00</td> <td>6.48</td> <td>6.48</td> <td>0.0000706</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                </table>
+                                </tr>
+                            </table>
+                            <div class="charting">
+                            </div>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="create-private-asset-100">
+                <h2>Benchmark round: create-private-asset-100</h2>
+                <p>Test a submitTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart Contract method named &#x60;createPrivateAsset&#x60;, which inserts an asset of size 100 bytes into the Private Data Collection of the authorized organization.</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 30
+rateControl:
+  type: fixed-load
+  opts:
+    transactionLoad: 10
+    startingTps: 1
+</pre>
+                        <h3>Performance metrics for create-private-asset-100</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>create-private-asset-100</td> <td>948</td> <td>0</td> <td>32.3</td> <td>2.25</td> <td>0.11</td> <td>0.28</td> <td>30.4</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for create-private-asset-100</h3>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="create-private-asset-200">
+                <h2>Benchmark round: create-private-asset-200</h2>
+                <p>Test a submitTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart Contract method named &#x60;createPrivateAsset&#x60;, which inserts an asset of size 200 bytes into the Private Data Collection of the authorized organization.</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 20
+rateControl:
+  type: fixed-load
+  opts:
+    transactionLoad: 10
+    startingTps: 1
+</pre>
+                        <h3>Performance metrics for create-private-asset-200</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>create-private-asset-200</td> <td>649</td> <td>0</td> <td>33.7</td> <td>2.12</td> <td>0.12</td> <td>0.28</td> <td>30.9</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for create-private-asset-200</h3>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="create-private-asset-500">
+                <h2>Benchmark round: create-private-asset-500</h2>
+                <p>Test a submitTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart Contract method named &#x60;createPrivateAsset&#x60;, which inserts an asset of size 500 bytes into the Private Data Collection of the authorized organization.</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 300
+rateControl:
+  type: fixed-load
+  opts:
+    transactionLoad: 10
+    startingTps: 1
+</pre>
+                        <h3>Performance metrics for create-private-asset-500</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>create-private-asset-500</td> <td>11469</td> <td>0</td> <td>38.3</td> <td>2.18</td> <td>0.11</td> <td>0.25</td> <td>38.1</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for create-private-asset-500</h3>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="create-private-asset-1000">
+                <h2>Benchmark round: create-private-asset-1000</h2>
+                <p>Test a submitTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart Contract method named &#x60;createPrivateAsset&#x60;, which inserts an asset of size 1000 bytes into the Private Data Collection of the authorized organization.</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 30
+rateControl:
+  type: fixed-load
+  opts:
+    transactionLoad: 10
+    startingTps: 1
+</pre>
+                        <h3>Performance metrics for create-private-asset-1000</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>create-private-asset-1000</td> <td>1002</td> <td>0</td> <td>34.0</td> <td>2.15</td> <td>0.12</td> <td>0.27</td> <td>31.9</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for create-private-asset-1000</h3>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="create-private-asset-2000">
+                <h2>Benchmark round: create-private-asset-2000</h2>
+                <p>Test a submitTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart Contract method named &#x60;createPrivateAsset&#x60;, which inserts an asset of size 2000 bytes into the Private Data Collection of the authorized organization.</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 20
+rateControl:
+  type: fixed-load
+  opts:
+    transactionLoad: 10
+    startingTps: 1
+</pre>
+                        <h3>Performance metrics for create-private-asset-2000</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>create-private-asset-2000</td> <td>548</td> <td>0</td> <td>28.7</td> <td>2.15</td> <td>0.12</td> <td>0.31</td> <td>26.2</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for create-private-asset-2000</h3>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="create-private-asset-5000">
+                <h2>Benchmark round: create-private-asset-5000</h2>
+                <p>Test a submitTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart Contract method named &#x60;createPrivateAsset&#x60;, which inserts an asset of size 5000 bytes into the Private Data Collection of the authorized organization.</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 40
+rateControl:
+  type: fixed-load
+  opts:
+    transactionLoad: 10
+    startingTps: 1
+</pre>
+                        <h3>Performance metrics for create-private-asset-5000</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>create-private-asset-5000</td> <td>1284</td> <td>0</td> <td>32.8</td> <td>2.10</td> <td>0.12</td> <td>0.28</td> <td>31.1</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for create-private-asset-5000</h3>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="create-private-asset-10000">
+                <h2>Benchmark round: create-private-asset-10000</h2>
+                <p>Test a submitTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart Contract method named &#x60;createPrivateAsset&#x60;, which inserts an asset of size 10000 bytes into the Private Data Collection  of the authorized organization.</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 30
+rateControl:
+  type: fixed-load
+  opts:
+    transactionLoad: 10
+    startingTps: 1
+</pre>
+                        <h3>Performance metrics for create-private-asset-10000</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>create-private-asset-10000</td> <td>910</td> <td>0</td> <td>30.9</td> <td>1.15</td> <td>0.11</td> <td>0.28</td> <td>30.8</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for create-private-asset-10000</h3>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;">
+                <h2>Test Environment</h2>
+                <h3>benchmark config</h3>
+                <pre id="benchmarkInfo" style="overflow: visible;white-space: pre-wrap;max-height:100%;">name: create-private-asset
+description: &gt;-
+  This is a duration based benchmark targeting a Hyperledger Fabric network
+  using the &#x60;basic&#x60; NodeJS chaincode contract that is interacted with via a
+  Fabric-SDK-Node Gateway. Each test round invokes the &#x60;createPrivateAsset&#x60;
+  method, with successive rounds increasing the byteSize of the asset added into
+  the Private Data  Collection of the authorized organization.
+workers:
+  type: local
+  number: 5
+rounds:
+  - label: create-private-asset-8000-fixed-tps
+    description: &gt;-
+      Test a submitTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart
+      Contract method named &#x60;createPrivateAsset&#x60;, which inserts an asset of size
+      8000 bytes into the Private Data Collection of the authorized organization
+      at a fixed TPS rate.
+    contractId: basic
+    txDuration: 10
+    rateControl:
+      type: fixed-rate
+      opts:
+        tps: 15
+    workload:
+      module: lib&#x2F;create-private-asset.js
+      arguments:
+        contractId: basic
+        byteSize: 8000
+  - label: create-private-asset-100
+    description: &gt;-
+      Test a submitTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart
+      Contract method named &#x60;createPrivateAsset&#x60;, which inserts an asset of size
+      100 bytes into the Private Data Collection of the authorized organization.
+    contractId: basic
+    txDuration: 30
+    rateControl:
+      type: fixed-load
+      opts:
+        transactionLoad: 10
+        startingTps: 1
+    workload:
+      module: lib&#x2F;create-private-asset.js
+      arguments:
+        contractId: basic
+        byteSize: 100
+  - label: create-private-asset-200
+    description: &gt;-
+      Test a submitTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart
+      Contract method named &#x60;createPrivateAsset&#x60;, which inserts an asset of size
+      200 bytes into the Private Data Collection of the authorized organization.
+    contractId: basic
+    txDuration: 20
+    rateControl:
+      type: fixed-load
+      opts:
+        transactionLoad: 10
+        startingTps: 1
+    workload:
+      module: lib&#x2F;create-private-asset.js
+      arguments:
+        contractId: basic
+        byteSize: 200
+  - label: create-private-asset-500
+    description: &gt;-
+      Test a submitTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart
+      Contract method named &#x60;createPrivateAsset&#x60;, which inserts an asset of size
+      500 bytes into the Private Data Collection of the authorized organization.
+    contractId: basic
+    txDuration: 300
+    rateControl:
+      type: fixed-load
+      opts:
+        transactionLoad: 10
+        startingTps: 1
+    workload:
+      module: lib&#x2F;create-private-asset.js
+      arguments:
+        contractId: basic
+        byteSize: 500
+  - label: create-private-asset-1000
+    description: &gt;-
+      Test a submitTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart
+      Contract method named &#x60;createPrivateAsset&#x60;, which inserts an asset of size
+      1000 bytes into the Private Data Collection of the authorized
+      organization.
+    contractId: basic
+    txDuration: 30
+    rateControl:
+      type: fixed-load
+      opts:
+        transactionLoad: 10
+        startingTps: 1
+    workload:
+      module: lib&#x2F;create-private-asset.js
+      arguments:
+        contractId: basic
+        byteSize: 1000
+  - label: create-private-asset-2000
+    description: &gt;-
+      Test a submitTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart
+      Contract method named &#x60;createPrivateAsset&#x60;, which inserts an asset of size
+      2000 bytes into the Private Data Collection of the authorized
+      organization.
+    contractId: basic
+    txDuration: 20
+    rateControl:
+      type: fixed-load
+      opts:
+        transactionLoad: 10
+        startingTps: 1
+    workload:
+      module: lib&#x2F;create-private-asset.js
+      arguments:
+        contractId: basic
+        byteSize: 2000
+  - label: create-private-asset-5000
+    description: &gt;-
+      Test a submitTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart
+      Contract method named &#x60;createPrivateAsset&#x60;, which inserts an asset of size
+      5000 bytes into the Private Data Collection of the authorized
+      organization.
+    contractId: basic
+    txDuration: 40
+    rateControl:
+      type: fixed-load
+      opts:
+        transactionLoad: 10
+        startingTps: 1
+    workload:
+      module: lib&#x2F;create-private-asset.js
+      arguments:
+        contractId: basic
+        byteSize: 5000
+  - label: create-private-asset-10000
+    description: &gt;-
+      Test a submitTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart
+      Contract method named &#x60;createPrivateAsset&#x60;, which inserts an asset of size
+      10000 bytes into the Private Data Collection  of the authorized
+      organization.
+    contractId: basic
+    txDuration: 30
+    rateControl:
+      type: fixed-load
+      opts:
+        transactionLoad: 10
+        startingTps: 1
+    workload:
+      module: lib&#x2F;create-private-asset.js
+      arguments:
+        contractId: basic
+        byteSize: 10000
+</pre>
+                <h3>SUT</h3>
+                <pre id="sutdetails">not provided</pre>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

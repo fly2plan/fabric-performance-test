@@ -1,0 +1,402 @@
+<!doctype html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<script>
+    function plotChart(divId, chartData) {
+        // Convert from stringified html, to valid JSON
+        const chartDetails = JSON.parse(chartData.replace(/&quot;/g,'"'));
+        new Chart(document.getElementById(divId), {
+            type: chartDetails.type,
+            data: {
+                labels: chartDetails.labels,
+                datasets: chartDetails.datasets
+            },
+            options: {
+                legend: { display: chartDetails.legend },
+                title: {
+                    display: true,
+                    text: chartDetails.title
+                }
+            }
+        });
+    }
+</script>
+<html>
+<head>
+    <title>Hyperledger Caliper Report</title>
+    <meta charset="UTF-8"/>
+    <style type="text/css">
+        .left-column {
+            position: fixed;
+            width:20%;
+        }
+        .left-column ul {
+            display: block;
+            padding: 0;
+            list-style: none;
+            border-bottom: 1px solid #d9d9d9;
+            font-size: 14px;
+        }
+        .left-column h2{
+            font-size: 24px;
+            font-weight: 400;
+            margin-block-end: 0.5em;
+        }
+        .left-column h3{
+            font-size: 18px;
+            font-weight: 400;
+            margin-block-end: 0.5em;
+        }
+        .left-column li{
+            margin-left: 10px;
+            margin-bottom: 5px;
+            color: #5e6b73;
+        }
+        .right-column {
+            margin-left: 22%;
+            width:60%;
+        }
+        .right-column table {
+            font-size:11px;
+            color:#333333;
+            border-width: 1px;
+            border-color: #666666;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        .right-column h2{
+            font-weight: 400;
+        }
+        .right-column h3{
+            font-weight: 400;
+        }
+        .right-column h4 {
+            font-weight: 400;
+            margin-block-end: 0;
+        }
+        .right-column th {
+            border-width: 1px;
+            font-size: small;
+            padding: 8px;
+            border-style: solid;
+            border-color: #666666;
+            background-color: #f2f2f2;
+        }
+        .right-column td {
+            border-width: 1px;
+            font-size: small;
+            padding: 8px;
+            border-style: solid;
+            border-color: #666666;
+            background-color: #ffffff;
+            font-weight: 400;
+        }
+        .tag {
+            margin-bottom: 10px;
+            padding: 5px 10px;
+        }
+        pre {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            -khtml-border-radius: 5px;
+            overflow:auto;
+            max-height:300px;
+            font-size:12px;
+        }
+        .charting {
+            display:flex;
+            flex-direction:row;
+            flex-wrap: wrap;
+            page-break-inside: auto;
+        }
+        .chart {
+            display:flex;
+            flex:1;
+            max-width: 50%;
+        }
+    </style>
+</head>
+<body style="font-family: IBM Plex Sans; font-weight: 200;">
+    <main>
+        <div class="left-column">
+            <img src="https://hyperledger.github.io/caliper/assets/img/hyperledger_caliper_logo_color.png" style="width:95%;" alt="">
+            <ul>
+                <h3>&nbspBasic information</h3>
+                <li>DLT: &nbsp<span style="font-weight: 500;">fabric</span></li>
+                <li>Name: &nbsp<span style="font-weight: 500;">empty-contract-1of</span></li>
+                <li>Description: &nbsp<span style="font-weight: 500;">This is a duration based benchmark targeting a Hyperledger Fabric network using the &#x60;basic&#x60; NodeJS chaincode contract that is interacted with via a Fabric-SDK-Node Gateway. Each test round flexes the &#x60;emptyContract&#x60; method. Rounds run for evaluate and submit Gateway routes.</span></li>
+                <li>Benchmark Rounds: &nbsp<span style="font-weight: 500;">4</span></li>
+                <li><a href="#benchmarkInfo">Details</a></li>
+            </ul>
+            <ul>
+                <h3>&nbspBenchmark results</h3>
+                <li><a href="#benchmarksummary">Summary</a></li>
+                    <li><a href="#empty-contract-evaluate">empty-contract-evaluate</a></li>
+                    <li><a href="#empty-contract-submit">empty-contract-submit</a></li>
+                    <li><a href="#empty-contract-evaluate-fixed-tps">empty-contract-evaluate-fixed-tps</a></li>
+                    <li><a href="#empty-contract-submit-fixed-tps">empty-contract-submit-fixed-tps</a></li>
+            </ul>
+            <ul>
+                <h3>&nbspSystem under test</h3>
+                <li>Version: &nbsp<span style="font-weight: 500;">2.3.3</span></li>
+                <li>NAME: &nbsp<span style="font-weight: 500;">Fabric with RAFT</span></li>
+                <li><a href="#sutdetails">Details</a></li>
+            </ul>
+        </div>
+
+        <div class="right-column">
+            <h1 style="padding-top: 3em; font-weight: 500;">Caliper report</h1>
+            <div style="border-bottom: 1px solid #d9d9d9; margin-bottom: 10px;" id="benchmarksummary">
+                <table style="min-width: 100%;">
+                    <h3>Summary of performance metrics</h3>
+                    <tr>
+                         <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                    </tr>
+
+                    <tr>
+                         <td>empty-contract-evaluate</td> <td>77230</td> <td>21434</td> <td>330.7</td> <td>0.31</td> <td>0.00</td> <td>0.08</td> <td>330.7</td>
+                    </tr>
+                    <tr>
+                         <td>empty-contract-submit</td> <td>48823</td> <td>0</td> <td>163.6</td> <td>2.07</td> <td>0.07</td> <td>0.46</td> <td>162.5</td>
+                    </tr>
+                    <tr>
+                         <td>empty-contract-evaluate-fixed-tps</td> <td>77358</td> <td>24920</td> <td>340.7</td> <td>3.14</td> <td>0.01</td> <td>0.29</td> <td>340.7</td>
+                    </tr>
+                    <tr>
+                         <td>empty-contract-submit-fixed-tps</td> <td>41429</td> <td>14</td> <td>138.1</td> <td>135.14</td> <td>0.31</td> <td>96.61</td> <td>115.6</td>
+                    </tr>
+                </table>
+            </div>
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="empty-contract-evaluate">
+                <h2>Benchmark round: empty-contract-evaluate</h2>
+                <p>Test an evaluateTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart Contract method named &#x60;emptyContract&#x60;, which immediately returns a null response. This represents the fastest possible round trip time for an evaluateTransaction() method that does not touch the world state or perform any action.</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 300
+rateControl:
+  type: fixed-load
+  opts:
+    transactionLoad: 100
+</pre>
+                        <h3>Performance metrics for empty-contract-evaluate</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>empty-contract-evaluate</td> <td>77230</td> <td>21434</td> <td>330.7</td> <td>0.31</td> <td>0.00</td> <td>0.08</td> <td>330.7</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for empty-contract-evaluate</h3>
+                            <h4>Resource monitor: docker</h4>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                <table>
+                                    <tr>
+                                         <th>Name</th> <th>CPU%(max)</th> <th>CPU%(avg)</th> <th>Memory(max) [MB]</th> <th>Memory(avg) [MB]</th> <th>Traffic In [MB]</th> <th>Traffic Out [MB]</th> <th>Disc Write [KB]</th> <th>Disc Read [B]</th>
+                                    </tr>
+                                    <tr>
+                                         <td>dev-peer0.org2.example.com-basic_1-c4cab91ac70db63072b9253309a40277a4d61be74b258e7e97991883b1f4e607</td> <td>0.02</td> <td>0.00</td> <td>50.5</td> <td>50.5</td> <td>0.00244</td> <td>0.00229</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>dev-peer0.org1.example.com-basic_1-c4cab91ac70db63072b9253309a40277a4d61be74b258e7e97991883b1f4e607</td> <td>68.68</td> <td>29.87</td> <td>117</td> <td>93.4</td> <td>142</td> <td>24.0</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>orderer3.example.com</td> <td>4.25</td> <td>0.45</td> <td>23.1</td> <td>23.0</td> <td>0.898</td> <td>0.900</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>orderer2.example.com</td> <td>1.21</td> <td>0.39</td> <td>21.3</td> <td>21.3</td> <td>0.901</td> <td>0.899</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>orderer.example.com</td> <td>0.89</td> <td>0.31</td> <td>20.9</td> <td>20.8</td> <td>0.612</td> <td>0.605</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>ca_orderer</td> <td>0.13</td> <td>0.01</td> <td>8.28</td> <td>8.28</td> <td>0.000277</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>peer0.org2.example.com</td> <td>2.56</td> <td>1.59</td> <td>247</td> <td>247</td> <td>0.306</td> <td>0.310</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>couchdb2</td> <td>2.07</td> <td>0.72</td> <td>59.6</td> <td>59.3</td> <td>0.000277</td> <td>0.00</td> <td>84.0</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>ca.org2.example.com</td> <td>0.00</td> <td>0.00</td> <td>8.69</td> <td>8.69</td> <td>0.000277</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>peer0.org1.example.com</td> <td>81.46</td> <td>42.70</td> <td>250</td> <td>250</td> <td>176</td> <td>283</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>couchdb0</td> <td>3.42</td> <td>0.76</td> <td>60.1</td> <td>59.6</td> <td>0.0000668</td> <td>0.00</td> <td>48.0</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>ca.org1.example.com</td> <td>0.13</td> <td>0.00</td> <td>9.00</td> <td>9.00</td> <td>0.00</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                </table>
+                                </tr>
+                            </table>
+                            <div class="charting">
+                            </div>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="empty-contract-submit">
+                <h2>Benchmark round: empty-contract-submit</h2>
+                <p>Test a submitTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart Contract method named &#x60;nullResponse&#x60;, which immediately returns a null response. This represents the fastest possible round trip time for a submitTransaction() method that does not touch the world state or perform any action.</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 300
+rateControl:
+  type: fixed-load
+  opts:
+    transactionLoad: 100
+</pre>
+                        <h3>Performance metrics for empty-contract-submit</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>empty-contract-submit</td> <td>48823</td> <td>0</td> <td>163.6</td> <td>2.07</td> <td>0.07</td> <td>0.46</td> <td>162.5</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for empty-contract-submit</h3>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="empty-contract-evaluate-fixed-tps">
+                <h2>Benchmark round: empty-contract-evaluate-fixed-tps</h2>
+                <p>Test an evaluateTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart Contract method named &#x60;emptyContract&#x60;, which immediately returns a null response. This represents the fastest possible round trip time for an evaluateTransaction() method that does not touch the world state or perform any action.</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 300
+rateControl:
+  type: fixed-rate
+  opts:
+    tps: 750
+</pre>
+                        <h3>Performance metrics for empty-contract-evaluate-fixed-tps</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>empty-contract-evaluate-fixed-tps</td> <td>77358</td> <td>24920</td> <td>340.7</td> <td>3.14</td> <td>0.01</td> <td>0.29</td> <td>340.7</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for empty-contract-evaluate-fixed-tps</h3>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="empty-contract-submit-fixed-tps">
+                <h2>Benchmark round: empty-contract-submit-fixed-tps</h2>
+                <p>Test a submitTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart Contract method named &#x60;nullResponse&#x60;, which immediately returns a null response. This represents the fastest possible round trip time for a submitTransaction() method that does not touch the world state or perform any action.</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 300
+rateControl:
+  type: fixed-rate
+  opts:
+    tps: 350
+</pre>
+                        <h3>Performance metrics for empty-contract-submit-fixed-tps</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>empty-contract-submit-fixed-tps</td> <td>41429</td> <td>14</td> <td>138.1</td> <td>135.14</td> <td>0.31</td> <td>96.61</td> <td>115.6</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for empty-contract-submit-fixed-tps</h3>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;">
+                <h2>Test Environment</h2>
+                <h3>benchmark config</h3>
+                <pre id="benchmarkInfo" style="overflow: visible;white-space: pre-wrap;max-height:100%;">name: empty-contract-1of
+description: &gt;-
+  This is a duration based benchmark targeting a Hyperledger Fabric network
+  using the &#x60;basic&#x60; NodeJS chaincode contract that is interacted with via a
+  Fabric-SDK-Node Gateway. Each test round flexes the &#x60;emptyContract&#x60; method.
+  Rounds run for evaluate and submit Gateway routes.
+workers:
+  type: local
+  number: 10
+rounds:
+  - label: empty-contract-evaluate
+    description: &gt;-
+      Test an evaluateTransaction() Gateway method against the NodeJS &#x60;basic&#x60;
+      Smart Contract method named &#x60;emptyContract&#x60;, which immediately returns a
+      null response. This represents the fastest possible round trip time for an
+      evaluateTransaction() method that does not touch the world state or
+      perform any action.
+    contractId: basic
+    txDuration: 300
+    rateControl:
+      type: fixed-load
+      opts:
+        transactionLoad: 100
+    workload:
+      module: lib&#x2F;empty-contract.js
+      arguments:
+        contractId: basic
+        consensus: false
+  - label: empty-contract-submit
+    description: &gt;-
+      Test a submitTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart
+      Contract method named &#x60;nullResponse&#x60;, which immediately returns a null
+      response. This represents the fastest possible round trip time for a
+      submitTransaction() method that does not touch the world state or perform
+      any action.
+    contractId: basic
+    txDuration: 300
+    rateControl:
+      type: fixed-load
+      opts:
+        transactionLoad: 100
+    workload:
+      module: lib&#x2F;empty-contract.js
+      arguments:
+        contractId: basic
+        consensus: true
+  - label: empty-contract-evaluate-fixed-tps
+    description: &gt;-
+      Test an evaluateTransaction() Gateway method against the NodeJS &#x60;basic&#x60;
+      Smart Contract method named &#x60;emptyContract&#x60;, which immediately returns a
+      null response. This represents the fastest possible round trip time for an
+      evaluateTransaction() method that does not touch the world state or
+      perform any action.
+    contractId: basic
+    txDuration: 300
+    rateControl:
+      type: fixed-rate
+      opts:
+        tps: 750
+    workload:
+      module: lib&#x2F;empty-contract.js
+      arguments:
+        contractId: basic
+        consensus: false
+  - label: empty-contract-submit-fixed-tps
+    description: &gt;-
+      Test a submitTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart
+      Contract method named &#x60;nullResponse&#x60;, which immediately returns a null
+      response. This represents the fastest possible round trip time for a
+      submitTransaction() method that does not touch the world state or perform
+      any action.
+    contractId: basic
+    txDuration: 300
+    rateControl:
+      type: fixed-rate
+      opts:
+        tps: 350
+    workload:
+      module: lib&#x2F;empty-contract.js
+      arguments:
+        contractId: basic
+        consensus: true
+</pre>
+                <h3>SUT</h3>
+                <pre id="sutdetails">{
+  &quot;Orderer&quot;: &quot;Raft&quot;,
+  &quot;Distribution&quot;: &quot;Single Host&quot;,
+  &quot;StateDB&quot;: &quot;CouchDB&quot;,
+  &quot;Size&quot;: &quot;2 Orgs with 1 Peer 3 Orderers&quot;
+}</pre>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,549 @@
+<!doctype html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<script>
+    function plotChart(divId, chartData) {
+        // Convert from stringified html, to valid JSON
+        const chartDetails = JSON.parse(chartData.replace(/&quot;/g,'"'));
+        new Chart(document.getElementById(divId), {
+            type: chartDetails.type,
+            data: {
+                labels: chartDetails.labels,
+                datasets: chartDetails.datasets
+            },
+            options: {
+                legend: { display: chartDetails.legend },
+                title: {
+                    display: true,
+                    text: chartDetails.title
+                }
+            }
+        });
+    }
+</script>
+<html>
+<head>
+    <title>Hyperledger Caliper Report</title>
+    <meta charset="UTF-8"/>
+    <style type="text/css">
+        .left-column {
+            position: fixed;
+            width:20%;
+        }
+        .left-column ul {
+            display: block;
+            padding: 0;
+            list-style: none;
+            border-bottom: 1px solid #d9d9d9;
+            font-size: 14px;
+        }
+        .left-column h2{
+            font-size: 24px;
+            font-weight: 400;
+            margin-block-end: 0.5em;
+        }
+        .left-column h3{
+            font-size: 18px;
+            font-weight: 400;
+            margin-block-end: 0.5em;
+        }
+        .left-column li{
+            margin-left: 10px;
+            margin-bottom: 5px;
+            color: #5e6b73;
+        }
+        .right-column {
+            margin-left: 22%;
+            width:60%;
+        }
+        .right-column table {
+            font-size:11px;
+            color:#333333;
+            border-width: 1px;
+            border-color: #666666;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        .right-column h2{
+            font-weight: 400;
+        }
+        .right-column h3{
+            font-weight: 400;
+        }
+        .right-column h4 {
+            font-weight: 400;
+            margin-block-end: 0;
+        }
+        .right-column th {
+            border-width: 1px;
+            font-size: small;
+            padding: 8px;
+            border-style: solid;
+            border-color: #666666;
+            background-color: #f2f2f2;
+        }
+        .right-column td {
+            border-width: 1px;
+            font-size: small;
+            padding: 8px;
+            border-style: solid;
+            border-color: #666666;
+            background-color: #ffffff;
+            font-weight: 400;
+        }
+        .tag {
+            margin-bottom: 10px;
+            padding: 5px 10px;
+        }
+        pre {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            -khtml-border-radius: 5px;
+            overflow:auto;
+            max-height:300px;
+            font-size:12px;
+        }
+        .charting {
+            display:flex;
+            flex-direction:row;
+            flex-wrap: wrap;
+            page-break-inside: auto;
+        }
+        .chart {
+            display:flex;
+            flex:1;
+            max-width: 50%;
+        }
+    </style>
+</head>
+<body style="font-family: IBM Plex Sans; font-weight: 200;">
+    <main>
+        <div class="left-column">
+            <img src="https://hyperledger.github.io/caliper/assets/img/hyperledger_caliper_logo_color.png" style="width:95%;" alt="">
+            <ul>
+                <h3>&nbspBasic information</h3>
+                <li>DLT: &nbsp<span style="font-weight: 500;">fabric</span></li>
+                <li>Name: &nbsp<span style="font-weight: 500;">basic-mixed-rich-query-pagination</span></li>
+                <li>Description: &nbsp<span style="font-weight: 500;">This is a duration based benchmark targeting a Hyperledger Fabric network using the &#x60;basic&#x60; NodeJS chaincode contract that is interacted with via a Fabric-SDK-Node Gateway. Each test round invokes the &#39;pageinatedRichQuery&#39; chaincode method.  Successive rounds increase the pagesize of retrieved assets.</span></li>
+                <li>Benchmark Rounds: &nbsp<span style="font-weight: 500;">6</span></li>
+                <li><a href="#benchmarkInfo">Details</a></li>
+            </ul>
+            <ul>
+                <h3>&nbspBenchmark results</h3>
+                <li><a href="#benchmarksummary">Summary</a></li>
+                    <li><a href="#mixed-rich-query-evaluate-10">mixed-rich-query-evaluate-10</a></li>
+                    <li><a href="#mixed-rich-query-evaluate-20">mixed-rich-query-evaluate-20</a></li>
+                    <li><a href="#mixed-rich-query-evaluate-50">mixed-rich-query-evaluate-50</a></li>
+                    <li><a href="#mixed-rich-query-evaluate-100">mixed-rich-query-evaluate-100</a></li>
+                    <li><a href="#mixed-rich-query-evaluate-200">mixed-rich-query-evaluate-200</a></li>
+                    <li><a href="#mixed-rich-query-evaluate-500">mixed-rich-query-evaluate-500</a></li>
+            </ul>
+            <ul>
+                <h3>&nbspSystem under test</h3>
+                <li>Version: &nbsp<span style="font-weight: 500;">2.3.3</span></li>
+                <li>NAME: &nbsp<span style="font-weight: 500;">Fabric with RAFT</span></li>
+                <li><a href="#sutdetails">Details</a></li>
+            </ul>
+        </div>
+
+        <div class="right-column">
+            <h1 style="padding-top: 3em; font-weight: 500;">Caliper report</h1>
+            <div style="border-bottom: 1px solid #d9d9d9; margin-bottom: 10px;" id="benchmarksummary">
+                <table style="min-width: 100%;">
+                    <h3>Summary of performance metrics</h3>
+                    <tr>
+                         <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                    </tr>
+
+                    <tr>
+                         <td>mixed-rich-query-evaluate-10</td> <td>28683</td> <td>11226</td> <td>133.4</td> <td>0.18</td> <td>0.01</td> <td>0.03</td> <td>133.4</td>
+                    </tr>
+                    <tr>
+                         <td>mixed-rich-query-evaluate-20</td> <td>28698</td> <td>13663</td> <td>141.6</td> <td>0.14</td> <td>0.01</td> <td>0.03</td> <td>141.6</td>
+                    </tr>
+                    <tr>
+                         <td>mixed-rich-query-evaluate-50</td> <td>28690</td> <td>12798</td> <td>138.6</td> <td>0.15</td> <td>0.01</td> <td>0.03</td> <td>138.6</td>
+                    </tr>
+                    <tr>
+                         <td>mixed-rich-query-evaluate-100</td> <td>28688</td> <td>13730</td> <td>141.7</td> <td>0.13</td> <td>0.01</td> <td>0.03</td> <td>141.7</td>
+                    </tr>
+                    <tr>
+                         <td>mixed-rich-query-evaluate-200</td> <td>28693</td> <td>14395</td> <td>144.0</td> <td>0.11</td> <td>0.01</td> <td>0.02</td> <td>144.0</td>
+                    </tr>
+                    <tr>
+                         <td>mixed-rich-query-evaluate-500</td> <td>28692</td> <td>16835</td> <td>152.2</td> <td>0.15</td> <td>0.01</td> <td>0.03</td> <td>152.1</td>
+                    </tr>
+                </table>
+            </div>
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="mixed-rich-query-evaluate-10">
+                <h2>Benchmark round: mixed-rich-query-evaluate-10</h2>
+                <p>Test a evaluateTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart Contract method named &#x60;paginatedRichQuery&#x60;.  This method performs a paginated rich query, with a passed pagesize of 10 and query string that matches all assets created by the calling client. Each returned asset is of size 8000 bytes.</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 300
+rateControl:
+  type: fixed-load
+  opts:
+    transactionLoad: 5
+    startingTps: 5
+</pre>
+                        <h3>Performance metrics for mixed-rich-query-evaluate-10</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>mixed-rich-query-evaluate-10</td> <td>28683</td> <td>11226</td> <td>133.4</td> <td>0.18</td> <td>0.01</td> <td>0.03</td> <td>133.4</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for mixed-rich-query-evaluate-10</h3>
+                            <h4>Resource monitor: docker</h4>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                <table>
+                                    <tr>
+                                         <th>Name</th> <th>CPU%(max)</th> <th>CPU%(avg)</th> <th>Memory(max) [MB]</th> <th>Memory(avg) [MB]</th> <th>Traffic In [MB]</th> <th>Traffic Out [MB]</th> <th>Disc Write [KB]</th> <th>Disc Read [B]</th>
+                                    </tr>
+                                    <tr>
+                                         <td>dev-peer0.org2.example.com-basic_1-c4cab91ac70db63072b9253309a40277a4d61be74b258e7e97991883b1f4e607</td> <td>0.03</td> <td>0.00</td> <td>50.9</td> <td>50.9</td> <td>0.00305</td> <td>0.00216</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>dev-peer0.org1.example.com-basic_1-c4cab91ac70db63072b9253309a40277a4d61be74b258e7e97991883b1f4e607</td> <td>49.46</td> <td>28.49</td> <td>101</td> <td>92.7</td> <td>87.8</td> <td>41.3</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>orderer3.example.com</td> <td>1.01</td> <td>0.37</td> <td>19.9</td> <td>19.9</td> <td>0.876</td> <td>0.875</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>orderer.example.com</td> <td>0.99</td> <td>0.29</td> <td>21.0</td> <td>21.0</td> <td>0.594</td> <td>0.590</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>orderer2.example.com</td> <td>1.05</td> <td>0.38</td> <td>20.2</td> <td>20.1</td> <td>0.875</td> <td>0.874</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>ca_orderer</td> <td>0.00</td> <td>0.00</td> <td>8.61</td> <td>8.61</td> <td>0.000677</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>couchdb2</td> <td>3.29</td> <td>0.96</td> <td>58.4</td> <td>57.8</td> <td>0.000677</td> <td>0.00</td> <td>144</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>peer0.org2.example.com</td> <td>2.32</td> <td>1.77</td> <td>245</td> <td>245</td> <td>0.283</td> <td>0.292</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>ca.org2.example.com</td> <td>0.13</td> <td>0.00</td> <td>9.27</td> <td>9.27</td> <td>0.000677</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>peer0.org1.example.com</td> <td>62.59</td> <td>35.46</td> <td>247</td> <td>247</td> <td>139</td> <td>169</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>couchdb0</td> <td>98.14</td> <td>57.20</td> <td>67.3</td> <td>66.1</td> <td>17.6</td> <td>30.1</td> <td>108</td> <td>0.00</td>
+                                    </tr>
+                                    <tr>
+                                         <td>ca.org1.example.com</td> <td>0.31</td> <td>0.01</td> <td>8.20</td> <td>8.20</td> <td>0.000677</td> <td>0.00</td> <td>0.00</td> <td>0.00</td>
+                                    </tr>
+                                </table>
+                                </tr>
+                            </table>
+                            <div class="charting">
+                            </div>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="mixed-rich-query-evaluate-20">
+                <h2>Benchmark round: mixed-rich-query-evaluate-20</h2>
+                <p>Test an evaluateTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart Contract method named &#x60;paginatedRichQuery&#x60;. This method performs a paginated rich query, with a passed pagesize of 20 and query string that matches all assets created by the calling client. Each returned asset is of size 8000 bytes.</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 300
+rateControl:
+  type: fixed-load
+  opts:
+    transactionLoad: 5
+    startingTps: 5
+</pre>
+                        <h3>Performance metrics for mixed-rich-query-evaluate-20</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>mixed-rich-query-evaluate-20</td> <td>28698</td> <td>13663</td> <td>141.6</td> <td>0.14</td> <td>0.01</td> <td>0.03</td> <td>141.6</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for mixed-rich-query-evaluate-20</h3>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="mixed-rich-query-evaluate-50">
+                <h2>Benchmark round: mixed-rich-query-evaluate-50</h2>
+                <p>Test an evaluateTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart Contract method named &#x60;paginatedRichQuery&#x60;. This method performs a paginated rich query, with a passed pagesize of 50 and query string that matches all assets created by the calling client. Each returned asset is of size 8000 bytes.</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 300
+rateControl:
+  type: fixed-load
+  opts:
+    transactionLoad: 5
+    startingTps: 5
+</pre>
+                        <h3>Performance metrics for mixed-rich-query-evaluate-50</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>mixed-rich-query-evaluate-50</td> <td>28690</td> <td>12798</td> <td>138.6</td> <td>0.15</td> <td>0.01</td> <td>0.03</td> <td>138.6</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for mixed-rich-query-evaluate-50</h3>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="mixed-rich-query-evaluate-100">
+                <h2>Benchmark round: mixed-rich-query-evaluate-100</h2>
+                <p>Test an evaluateTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart Contract method named &#x60;paginatedRichQuery&#x60;. This method performs a paginated rich query, with a passed pagesize of 100 and query string that matches all assets created by the calling client. Each returned asset is of size 8000 bytes.</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 300
+rateControl:
+  type: fixed-load
+  opts:
+    transactionLoad: 5
+    startingTps: 5
+</pre>
+                        <h3>Performance metrics for mixed-rich-query-evaluate-100</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>mixed-rich-query-evaluate-100</td> <td>28688</td> <td>13730</td> <td>141.7</td> <td>0.13</td> <td>0.01</td> <td>0.03</td> <td>141.7</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for mixed-rich-query-evaluate-100</h3>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="mixed-rich-query-evaluate-200">
+                <h2>Benchmark round: mixed-rich-query-evaluate-200</h2>
+                <p>Test an evaluateTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart Contract method named &#x60;paginatedRichQuery&#x60;. This method performs a paginated rich query, with a passed pagesize of 200 and query string that matches all assets created by the calling client. Each returned asset is of size 8000 bytes.</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 300
+rateControl:
+  type: fixed-load
+  opts:
+    transactionLoad: 5
+    startingTps: 5
+</pre>
+                        <h3>Performance metrics for mixed-rich-query-evaluate-200</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>mixed-rich-query-evaluate-200</td> <td>28693</td> <td>14395</td> <td>144.0</td> <td>0.11</td> <td>0.01</td> <td>0.02</td> <td>144.0</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for mixed-rich-query-evaluate-200</h3>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;" id="mixed-rich-query-evaluate-500">
+                <h2>Benchmark round: mixed-rich-query-evaluate-500</h2>
+                <p>Test an evaluateTransaction() Gateway method against the NodeJS &#x60;basic&#x60; Smart Contract method named &#x60;paginatedRichQuery&#x60;. This method performs a paginated rich query, with a passed pagesize of 500 and query string that matches all assets created by the calling client. Each returned asset is of size 8000 bytes.</p>
+                <pre style="overflow: visible;white-space: pre-wrap;max-height:100%;">txDuration: 300
+rateControl:
+  type: fixed-load
+  opts:
+    transactionLoad: 5
+    startingTps: 5
+</pre>
+                        <h3>Performance metrics for mixed-rich-query-evaluate-500</h3>
+                            <table style="min-width: 100%;">
+                                <tr>
+                                     <th>Name</th> <th>Succ</th> <th>Fail</th> <th>Send Rate (TPS)</th> <th>Max Latency (s)</th> <th>Min Latency (s)</th> <th>Avg Latency (s)</th> <th>Throughput (TPS)</th>
+                                </tr>
+                                <tr>
+                                     <td>mixed-rich-query-evaluate-500</td> <td>28692</td> <td>16835</td> <td>152.2</td> <td>0.15</td> <td>0.01</td> <td>0.03</td> <td>152.1</td>
+                                </tr>
+                            </table>
+                        <h3>Resource utilization for mixed-rich-query-evaluate-500</h3>
+            </div>
+
+            <div style="border-bottom: 1px solid #d9d9d9; padding-bottom: 10px;">
+                <h2>Test Environment</h2>
+                <h3>benchmark config</h3>
+                <pre id="benchmarkInfo" style="overflow: visible;white-space: pre-wrap;max-height:100%;">name: basic-mixed-rich-query-pagination
+description: &gt;-
+  This is a duration based benchmark targeting a Hyperledger Fabric network
+  using the &#x60;basic&#x60; NodeJS chaincode contract that is interacted with via a
+  Fabric-SDK-Node Gateway. Each test round invokes the &#39;pageinatedRichQuery&#39;
+  chaincode method.  Successive rounds increase the pagesize of retrieved
+  assets.
+workers:
+  type: local
+  number: 4
+rounds:
+  - label: mixed-rich-query-evaluate-10
+    description: &gt;-
+      Test a evaluateTransaction() Gateway method against the NodeJS &#x60;basic&#x60;
+      Smart Contract method named &#x60;paginatedRichQuery&#x60;.  This method performs a
+      paginated rich query, with a passed pagesize of 10 and query string that
+      matches all assets created by the calling client. Each returned asset is
+      of size 8000 bytes.
+    contractId: basic
+    txDuration: 300
+    rateControl:
+      type: fixed-load
+      opts:
+        transactionLoad: 5
+        startingTps: 5
+    workload:
+      module: lib&#x2F;mixed-rich-query-asset.js
+      arguments:
+        contractId: basic
+        create_sizes:
+          - 100
+          - 1000
+          - 2000
+          - 4000
+          - 8000
+        assets: 8000
+        pagesize: &#39;10&#39;
+        consensus: false
+  - label: mixed-rich-query-evaluate-20
+    description: &gt;-
+      Test an evaluateTransaction() Gateway method against the NodeJS &#x60;basic&#x60;
+      Smart Contract method named &#x60;paginatedRichQuery&#x60;. This method performs a
+      paginated rich query, with a passed pagesize of 20 and query string that
+      matches all assets created by the calling client. Each returned asset is
+      of size 8000 bytes.
+    contractId: basic
+    txDuration: 300
+    rateControl:
+      type: fixed-load
+      opts:
+        transactionLoad: 5
+        startingTps: 5
+    workload:
+      module: lib&#x2F;mixed-rich-query-asset.js
+      arguments:
+        contractId: basic
+        create_sizes:
+          - 100
+          - 1000
+          - 2000
+          - 4000
+          - 8000
+        pagesize: &#39;20&#39;
+        noSetup: true
+        consensus: false
+  - label: mixed-rich-query-evaluate-50
+    description: &gt;-
+      Test an evaluateTransaction() Gateway method against the NodeJS &#x60;basic&#x60;
+      Smart Contract method named &#x60;paginatedRichQuery&#x60;. This method performs a
+      paginated rich query, with a passed pagesize of 50 and query string that
+      matches all assets created by the calling client. Each returned asset is
+      of size 8000 bytes.
+    contractId: basic
+    txDuration: 300
+    rateControl:
+      type: fixed-load
+      opts:
+        transactionLoad: 5
+        startingTps: 5
+    workload:
+      module: lib&#x2F;mixed-rich-query-asset.js
+      arguments:
+        contractId: basic
+        create_sizes:
+          - 100
+          - 1000
+          - 2000
+          - 4000
+          - 8000
+        pagesize: &#39;50&#39;
+        noSetup: true
+        consensus: false
+  - label: mixed-rich-query-evaluate-100
+    description: &gt;-
+      Test an evaluateTransaction() Gateway method against the NodeJS &#x60;basic&#x60;
+      Smart Contract method named &#x60;paginatedRichQuery&#x60;. This method performs a
+      paginated rich query, with a passed pagesize of 100 and query string that
+      matches all assets created by the calling client. Each returned asset is
+      of size 8000 bytes.
+    contractId: basic
+    txDuration: 300
+    rateControl:
+      type: fixed-load
+      opts:
+        transactionLoad: 5
+        startingTps: 5
+    workload:
+      module: lib&#x2F;mixed-rich-query-asset.js
+      arguments:
+        contractId: basic
+        create_sizes:
+          - 100
+          - 1000
+          - 2000
+          - 4000
+          - 8000
+        pagesize: &#39;100&#39;
+        noSetup: true
+        consensus: false
+  - label: mixed-rich-query-evaluate-200
+    description: &gt;-
+      Test an evaluateTransaction() Gateway method against the NodeJS &#x60;basic&#x60;
+      Smart Contract method named &#x60;paginatedRichQuery&#x60;. This method performs a
+      paginated rich query, with a passed pagesize of 200 and query string that
+      matches all assets created by the calling client. Each returned asset is
+      of size 8000 bytes.
+    contractId: basic
+    txDuration: 300
+    rateControl:
+      type: fixed-load
+      opts:
+        transactionLoad: 5
+        startingTps: 5
+    workload:
+      module: lib&#x2F;mixed-rich-query-asset.js
+      arguments:
+        contractId: basic
+        create_sizes:
+          - 100
+          - 1000
+          - 2000
+          - 4000
+          - 8000
+        pagesize: &#39;200&#39;
+        noSetup: true
+        consensus: false
+  - label: mixed-rich-query-evaluate-500
+    description: &gt;-
+      Test an evaluateTransaction() Gateway method against the NodeJS &#x60;basic&#x60;
+      Smart Contract method named &#x60;paginatedRichQuery&#x60;. This method performs a
+      paginated rich query, with a passed pagesize of 500 and query string that
+      matches all assets created by the calling client. Each returned asset is
+      of size 8000 bytes.
+    contractId: basic
+    txDuration: 300
+    rateControl:
+      type: fixed-load
+      opts:
+        transactionLoad: 5
+        startingTps: 5
+    workload:
+      module: lib&#x2F;mixed-rich-query-asset.js
+      arguments:
+        contractId: basic
+        create_sizes:
+          - 100
+          - 1000
+          - 2000
+          - 4000
+          - 8000
+        pagesize: &#39;500&#39;
+        noSetup: true
+        consensus: false
+</pre>
+                <h3>SUT</h3>
+                <pre id="sutdetails">{
+  &quot;Orderer&quot;: &quot;Raft&quot;,
+  &quot;Distribution&quot;: &quot;Single Host&quot;,
+  &quot;StateDB&quot;: &quot;CouchDB&quot;,
+  &quot;Size&quot;: &quot;2 Orgs with 1 Peer 3 Orderers&quot;
+}</pre>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
