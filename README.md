@@ -6,6 +6,8 @@ This folder contains the caliper framework-based test report of the HLF "mir" an
 
 All the caliper benchmark files and network configuration are placed inside the caliper/src folder. The contract folder has all the common benchmark files used for testing the performance. The test was conducted on a **single host with 2 org with 1 peer and 3 (RAFT) or 4 (Mir) orderers**. The testnetwork  and chaincode used for the caliper test were placed inside the mir and raft folders. 
 
+The performance-byte-szie-report folder contains the test report having different block maxbyte size in configtx along with diffrent trasctions count combination used with it.
+
 #### Running the Mir BFT ordering service test
 
     - Clone the repo.
