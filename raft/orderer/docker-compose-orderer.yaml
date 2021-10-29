@@ -47,7 +47,9 @@ services:
       - ./genesis.block:/var/hyperledger/orderer/genesis.block
       - ./crypto-config-ca/ordererOrganizations/example.com/orderers/orderer.example.com/msp:/var/hyperledger/orderer/msp
       - ./crypto-config-ca/ordererOrganizations/example.com/orderers/orderer.example.com/tls:/var/hyperledger/orderer/tls
-
+      - orderer.example.com:/var/hyperledger/production/orderer
+      - ./configtx:/etc/hyperledger/fabric
+      
   orderer2.example.com:
     container_name: orderer2.example.com
     image: hyperledger/fabric-orderer:2.3.2
@@ -82,7 +84,9 @@ services:
       - ./genesis.block:/var/hyperledger/orderer/orderer.genesis.block
       - ./crypto-config-ca/ordererOrganizations/example.com/orderers/orderer2.example.com/msp:/var/hyperledger/orderer/msp
       - ./crypto-config-ca/ordererOrganizations/example.com/orderers/orderer2.example.com/tls:/var/hyperledger/orderer/tls
-
+      - orderer2.example.com:/var/hyperledger/production/orderer
+      - ./configtx:/etc/hyperledger/fabric
+     
   orderer3.example.com:
     container_name: orderer3.example.com
     image: hyperledger/fabric-orderer:2.3.2
@@ -117,7 +121,7 @@ services:
       - ./genesis.block:/var/hyperledger/orderer/orderer.genesis.block
       - ./crypto-config-ca/ordererOrganizations/example.com/orderers/orderer3.example.com/msp:/var/hyperledger/orderer/msp
       - ./crypto-config-ca/ordererOrganizations/example.com/orderers/orderer3.example.com/tls:/var/hyperledger/orderer/tls
-
+      - ./configtx:/etc/hyperledger/fabric
   
   orderer4.example.com:
     container_name: orderer4.example.com
@@ -153,6 +157,8 @@ services:
       - ./genesis.block:/var/hyperledger/orderer/orderer.genesis.block
       - ./crypto-config-ca/ordererOrganizations/example.com/orderers/orderer4.example.com/msp:/var/hyperledger/orderer/msp
       - ./crypto-config-ca/ordererOrganizations/example.com/orderers/orderer4.example.com/tls:/var/hyperledger/orderer/tls
+      - orderer4.example.com:/var/hyperledger/production/orderer
+      - ./configtx:/etc/hyperledger/fabric
   orderer5.example.com:
     container_name: orderer5.example.com
     image: hyperledger/fabric-orderer:2.3.2
@@ -187,4 +193,5 @@ services:
       - ./genesis.block:/var/hyperledger/orderer/orderer.genesis.block
       - ./crypto-config-ca/ordererOrganizations/example.com/orderers/orderer5.example.com/msp:/var/hyperledger/orderer/msp
       - ./crypto-config-ca/ordererOrganizations/example.com/orderers/orderer5.example.com/tls:/var/hyperledger/orderer/tls
-      
+      - orderer5.example.com:/var/hyperledger/production/orderer
+      - ./configtx:/etc/hyperledger/fabric
