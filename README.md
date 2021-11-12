@@ -50,15 +50,15 @@ The performance-byte-szie-report folder contains the test report having differen
 
 | **Benchmark File Name** | **Completion Status** | **Remarks** |
 | --- | --- | --- |
-| create-asset.yaml | Successful | Takes too long |
-| create-private-asset.yaml | Successful | Takes too long |
-| get-asset.yaml | Successful | Takes too long |
+| create-asset.yaml | Successful | After modifying gossip buffersize |
+| create-private-asset.yaml | Successful | After modifying gossip buffersize |
+| get-asset.yaml | Successful | After modifying gossip buffersize |
 | empty-contract-1of.yaml | Successful |  |
 | get-asset-local.yaml | Successful | |
 | create-private-asset-local.yaml | Successful | |
-| create-asset-local.yaml | Successful | Takes too long |
+| create-asset-local.yaml | Successful | After modifying gossip buffersize |
 | test.yaml | Successful | |
-| mixed-range-query-pagination.yaml| Unsuccessful | Takes too long |
-| fixed-tps-runs.yaml | Unsuccessful | Takes too long | | 
+| mixed-range-query-pagination.yaml| Unsuccessful | After modifying gossip buffersize |
+| fixed-tps-runs.yaml | Successful | After modifying gossip buffersize | | 
 | report-delete-asset-local | Successful | |
 | get-asset-local-high-tps  | Successful | |
